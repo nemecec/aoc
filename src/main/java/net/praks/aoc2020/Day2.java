@@ -39,15 +39,15 @@ public class Day2 {
   private static class PasswordPolicy {
 
     private static final Pattern PATTERN = Pattern.compile("(\\d+)-(\\d+) (.)");
-    int min;
-    int max;
+    int pos1;
+    int pos2;
     char requiredCharacter;
 
     public PasswordPolicy(String policyStr) {
       Matcher matcher = PATTERN.matcher(policyStr);
       if (matcher.matches()) {
-        this.min = Integer.parseInt(matcher.group(1));
-        this.max = Integer.parseInt(matcher.group(2));
+        this.pos1 = Integer.parseInt(matcher.group(1));
+        this.pos2 = Integer.parseInt(matcher.group(2));
         this.requiredCharacter = matcher.group(3).charAt(0);
       }
       else {
@@ -57,13 +57,13 @@ public class Day2 {
 
     boolean isValid(String password) {
       int count = 0;
-      for (int i = 0; i < password.length(); i++) {
-        char c = password.charAt(i);
-        if (c == requiredCharacter) {
-          count++;
-        }
+      if (password.charAt(pos1 - 1) == requiredCharacter) {
+        count++;
       }
-      return count >= min && count <= max;
+      if (password.charAt(pos2 - 1) == requiredCharacter) {
+        count++;
+      }
+      return count == 1;
     }
 
   }
