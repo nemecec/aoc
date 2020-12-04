@@ -1,5 +1,6 @@
 package net.praks.aoc2020;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 import java.util.List;
@@ -7,26 +8,44 @@ import java.util.List;
 /**
  * <a href="https://adventofcode.com/2020/day/3">Day 3: Toboggan Trajectory</a>
  */
+@RequiredArgsConstructor
 public class Day3 {
 
-  int countTreesForSlope(int columnInc, int rowInc, Map map) {
+  private final TobogganMap tobogganMap;
+
+  static long multiplyTreeCountScenarios(TobogganMap tobogganMap, List<Slope> slopes) {
+    return slopes.stream()
+        .map(slope -> new Day3(tobogganMap).countTreesForSlope(slope))
+        .mapToLong(Long::valueOf)
+        .reduce(1, (a, b) -> a * b);
+  }
+
+  int countTreesForSlope(Slope slope) {
     int currentRow = 1;
     int currentColumn = 1;
-    int rowCount = map.getRowCount();
+    int rowCount = tobogganMap.getRowCount();
     int treeCount = 0;
     while (currentRow <= rowCount) {
-      MapPoint point = map.getPointAt(currentRow, currentColumn);
+      MapPoint point = tobogganMap.getPointAt(currentRow, currentColumn);
       if (point.isTree()) {
         treeCount++;
       }
-      currentColumn += columnInc;
-      currentRow += rowInc;
+      currentColumn += slope.getColumnInc();
+      currentRow += slope.getRowInc();
     }
     return treeCount;
   }
 
   @Value
-  static class Map {
+  static class Slope {
+
+    int columnInc;
+    int rowInc;
+
+  }
+
+  @Value
+  static class TobogganMap {
 
     private static final char TREE = '#';
     private static final char EMPTY = '.';
@@ -51,7 +70,7 @@ public class Day3 {
       return (coordinate - 1) % coordinateLength;
     }
 
-    static Map parse(List<String> mapRowsAsString) {
+    static TobogganMap parse(List<String> mapRowsAsString) {
       MapPoint[][] points = new MapPoint[mapRowsAsString.size()][];
       for (int i = 0; i < mapRowsAsString.size(); i++) {
         String mapRowStr = mapRowsAsString.get(i).trim();
@@ -61,7 +80,7 @@ public class Day3 {
           points[i][j] = new MapPoint(mapPointChar == TREE);
         }
       }
-      return new Map(points);
+      return new TobogganMap(points);
     }
 
     @Override
@@ -84,7 +103,7 @@ public class Day3 {
 
     @Override
     public String toString() {
-      return String.valueOf(isTree ? Map.TREE : Map.EMPTY);
+      return String.valueOf(isTree ? TobogganMap.TREE : TobogganMap.EMPTY);
     }
   }
 
