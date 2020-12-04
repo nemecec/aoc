@@ -1,25 +1,59 @@
 package net.praks.aoc2020;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Day1 {
+/**
+ * <a href="https://adventofcode.com/2020/day/1">Day 1: Report Repair</a>
+ */
+@RequiredArgsConstructor
+class Day1 {
 
-  public static void main(String[] args) throws IOException {
-    List<Long> numbers = Files.readAllLines(Paths.get(args[0])).stream().filter(s -> !s.isEmpty()).map(Long::parseLong).collect(
+  private final int countOfNumbersToSum;
+  private final int sumToFind;
+
+  long findMultipleWithSum(List<String> numbersAsStrings) {
+    List<Long> numbers = numbersAsStrings.stream().filter(s -> !s.isEmpty()).map(Long::parseLong).collect(
         Collectors.toList());
-    for (Long number1 : numbers) {
-      for (Long number2 : numbers) {
-        for (Long number3 : numbers) {
-          if (number1 + number2 + number3 == 2020) {
-            System.out.printf("%s * %s * %s = %s%n", number1, number2, number3, number1 * number2 * number3);
-          }
-        }
+    try {
+      findSum(numbers, new LinkedList<>(), 0);
+    }
+    catch (SumFoundException e) {
+      return e.getOperands().stream().reduce(1L, (a, b) -> a * b);
+    }
+    throw new IllegalArgumentException("No match found!");
+  }
+
+  private void findSum(List<Long> numbers, Deque<Long> operands, int recursionLevel) throws SumFoundException {
+    if (recursionLevel > 0 && recursionLevel == countOfNumbersToSum) {
+      if (operands.stream().reduce(Long::sum).orElse(0L) == sumToFind) {
+        throw new SumFoundException(new ArrayList<>(operands));
       }
     }
+    else {
+      for (Long number : numbers) {
+        operands.push(number);
+        findSum(numbers, operands, recursionLevel + 1);
+        operands.pop();
+      }
+    }
+  }
+
+  @Getter
+  private static class SumFoundException extends Exception {
+
+    private final List<Long> operands;
+
+    private SumFoundException(List<Long> operands) {
+      this.operands = operands;
+    }
+
   }
 
 }
