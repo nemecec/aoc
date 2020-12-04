@@ -14,14 +14,37 @@ class Day4Test {
 
   @ParameterizedTest
   @CsvSource({
-      "part1-small, 2",
-      "part1, 245"
+      "part1-small, false, 2",
+      "part1, false, 245",
+      "part1-small, true, 2",
+      "part1, true, 133"
   })
-  void test(String caseName, long expectedCount) throws IOException {
+  void testWithoutValueValidation(String caseName, boolean validateValues, long expectedCount) throws IOException {
     try (Reader reader = new InputStreamReader(ResourceUtil.getResource(getClass(), caseName))) {
-      long actualCount = Day4.countValidPassports(CharStreams.toString(reader));
+      long actualCount = Day4.countValidPassports(CharStreams.toString(reader), validateValues);
       assertThat(actualCount).isEqualTo(expectedCount);
     }
+  }
+
+  @ParameterizedTest
+  @CsvSource({
+      "byr, 2002, true",
+      "byr, 2003, false",
+      "hgt, 60in, true",
+      "hgt, 190cm, true",
+      "hgt, 190in, false",
+      "hgt, 190, false",
+      "hcl, #123abc, true",
+      "hcl, #123abz, false",
+      "hcl, 123abc, false",
+      "ecl, brn, true",
+      "ecl, wat, false",
+      "pid, 000000001, true",
+      "pid, 0123456789, false",
+  })
+  void testKeyValidation(Day4.Key givenKey, String givenValue, boolean isExpectedToBeValid) {
+    boolean isActuallyValid = givenKey.isValid(givenValue);
+    assertThat(isActuallyValid).isEqualTo(isExpectedToBeValid);
   }
 
 }

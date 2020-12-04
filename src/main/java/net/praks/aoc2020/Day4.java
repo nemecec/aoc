@@ -1,10 +1,12 @@
 package net.praks.aoc2020;
 
+import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -14,8 +16,8 @@ import java.util.stream.Collectors;
  */
 public class Day4 {
 
-  static long countValidPassports(String input) {
-    return PassportList.parse(input).countValid();
+  static long countValidPassports(String input, boolean validateValues) {
+    return PassportList.parse(input).countValid(validateValues);
   }
 
   @Value
@@ -30,8 +32,8 @@ public class Day4 {
       );
     }
 
-    long countValid() {
-      return passports.stream().filter(Passport::isValid).count();
+    long countValid(boolean validateValues) {
+      return passports.stream().filter(passport -> passport.isValid(validateValues)).count();
     }
   }
 
@@ -49,16 +51,20 @@ public class Day4 {
       );
     }
 
-    boolean isValid() {
+    boolean isValid(boolean validateValues) {
       int totalNumberOfPossibleKeys = Key.values().length;
+      boolean isValid = false;
       if (keyValues.size() == totalNumberOfPossibleKeys) {
-        return true;
+        isValid = true;
       }
       else if (keyValues.size() == totalNumberOfPossibleKeys - 1) {
         // One field is missing -- this is acceptable as long as that field is "cid"
-        return !keyValues.containsKey(Key.cid);
+        isValid = !keyValues.containsKey(Key.cid);
       }
-      return false;
+      if (isValid && validateValues) {
+        return keyValues.values().stream().allMatch(KeyValue::isValid);
+      }
+      return isValid;
     }
 
   }
@@ -80,22 +86,65 @@ public class Day4 {
       }
     }
 
+    boolean isValid() {
+      return key.isValid(value);
+    }
+
   }
 
-  private enum Key {
-    byr("Birth Year"),
-    iyr("Issue Year"),
-    eyr("Expiration Year"),
-    hgt("Height"),
-    hcl("Hair Color"),
-    ecl("Eye Color"),
-    pid("Passport ID"),
-    cid("Country ID");
+  @RequiredArgsConstructor
+  private static class NumberValidator implements Predicate<String> {
+
+    static NumberValidator plainNumber(int atLeast, int atMost) {
+      return new NumberValidator(Pattern.compile("(\\d+)"), atLeast, atMost);
+    }
+
+    static NumberValidator numberWithSuffix(String suffix, int atLeast, int atMost) {
+      return new NumberValidator(Pattern.compile("(\\d+)" + suffix), atLeast, atMost);
+    }
+
+    private final Pattern pattern;
+    private final int atLeast;
+    private final int atMost;
+
+    @Override
+    public boolean test(String v) {
+      Matcher matcher = pattern.matcher(v);
+      if (matcher.matches()) {
+        String cleanValue = matcher.group(1);
+        int intValue = Integer.parseInt(cleanValue);
+        return intValue >= atLeast && intValue <= atMost;
+      }
+      return false;
+    }
+
+    @Override
+    public String toString() {
+      return pattern + ", " + atLeast + "-" + atMost;
+    }
+
+  }
+
+  enum Key {
+    byr("Birth Year", NumberValidator.plainNumber(1920, 2002)),
+    iyr("Issue Year", NumberValidator.plainNumber(2010, 2020)),
+    eyr("Expiration Year", NumberValidator.plainNumber(2020, 2030)),
+    hgt("Height", NumberValidator.numberWithSuffix("cm", 150, 193).or(NumberValidator.numberWithSuffix("in", 59, 76))),
+    hcl("Hair Color", v -> Pattern.matches("#[0-9a-f]{6}", v)),
+    ecl("Eye Color", v -> Pattern.matches("amb|blu|brn|gry|grn|hzl|oth", v)),
+    pid("Passport ID", v -> Pattern.matches("\\d{9}", v)),
+    cid("Country ID", v -> true);
 
     private final String description;
+    private final Predicate<String> validator;
 
-    Key(String description) {
+    Key(String description, Predicate<String> validator) {
       this.description = description;
+      this.validator = validator;
+    }
+
+    boolean isValid(String value) {
+      return validator.test(value);
     }
 
     @Override
