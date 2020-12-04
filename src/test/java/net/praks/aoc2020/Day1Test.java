@@ -26,4 +26,5 @@ class Day1Test {
       assertThat(actualProduct).isEqualTo(expectedProduct);
     }
   }
+
 }
