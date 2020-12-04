@@ -14,10 +14,10 @@ class Day4Test {
 
   @ParameterizedTest
   @CsvSource({
-      "part1-small, false, 2",
-      "part1, false, 245",
-      "part1-small, true, 2",
-      "part1, true, 133"
+      "example, false, 2",
+      "real, false, 245",
+      "example, true, 2",
+      "real, true, 133"
   })
   void testWithoutValueValidation(String caseName, boolean validateValues, long expectedCount) throws IOException {
     try (Reader reader = new InputStreamReader(ResourceUtil.getResource(getClass(), caseName))) {
