@@ -14,8 +14,8 @@ class Day3Test {
 
   @ParameterizedTest
   @CsvSource({
-      "part1-small, 1/1;3/1;5/1;7/1;1/2, 336",
-      "part1, 1/1;3/1;5/1;7/1;1/2, 3898725600"
+      "example, 1/1;3/1;5/1;7/1;1/2, 336",
+      "real, 1/1;3/1;5/1;7/1;1/2, 3898725600"
   })
   void test(String caseName, String slopeStr, long expectedTotalProduct) throws IOException {
     try (Reader reader = new InputStreamReader(ResourceUtil.getResource(getClass(),caseName))) {
