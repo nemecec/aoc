@@ -4,7 +4,7 @@ Advent Of Code solutions
 Here you can find solutions to the [Advent of Code](https://adventofcode.com/) puzzles,
 implemented in Java.
 
-[![Java CI with Gradle](https://github.com/nemecec/aoc2020/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/nemecec/aoc2020/actions?query=workflow%3A%22Java+CI+with+Gradle%22)
+[![Java CI with Gradle](https://github.com/nemecec/aoc/workflows/Java%20CI%20with%20Gradle/badge.svg)](https://github.com/nemecec/aoc/actions?query=workflow%3A%22Java+CI+with+Gradle%22)
 
 Requirements
 ---
