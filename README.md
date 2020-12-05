@@ -4,6 +4,8 @@ Advent Of Code 2020 solutions
 Here you can find solutions to the [Advent of Code 2020](https://adventofcode.com/2020) puzzles,
 implemented in Java.
 
+![Java CI with Gradle](https://github.com/nemecec/aoc2020/workflows/Java%20CI%20with%20Gradle/badge.svg)
+
 Requirements
 ---
 
