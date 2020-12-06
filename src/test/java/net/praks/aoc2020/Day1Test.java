@@ -1,12 +1,9 @@
 package net.praks.aoc2020;
 
-import com.google.common.io.CharStreams;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,12 +16,10 @@ class Day1Test {
       "example, 3, 241861950",
       "real, 3, 85555470",
   })
-  void test(String caseName, int countOfNumbersToSum, long expectedProduct) throws IOException {
-    try (Reader reader = new InputStreamReader(ResourceUtil.getResource(getClass(), caseName))) {
-      Day1 day1 = new Day1(countOfNumbersToSum, 2020);
-      long actualProduct = day1.findMultipleWithSum(CharStreams.readLines(reader));
-      assertThat(actualProduct).isEqualTo(expectedProduct);
-    }
+  void test(@ResourceFromClassPathArgument List<String> input, int countOfNumbersToSum, long expectedProduct) {
+    Day1 day1 = new Day1(countOfNumbersToSum, 2020);
+    long actualProduct = day1.findMultipleWithSum(input);
+    assertThat(actualProduct).isEqualTo(expectedProduct);
   }
 
 }

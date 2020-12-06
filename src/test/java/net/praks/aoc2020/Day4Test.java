@@ -1,12 +1,7 @@
 package net.praks.aoc2020;
 
-import com.google.common.io.CharStreams;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -19,11 +14,9 @@ class Day4Test {
       "example, true, 2",
       "real, true, 133"
   })
-  void testWithoutValueValidation(String caseName, boolean validateValues, long expectedCount) throws IOException {
-    try (Reader reader = new InputStreamReader(ResourceUtil.getResource(getClass(), caseName))) {
-      long actualCount = Day4.countValidPassports(CharStreams.toString(reader), validateValues);
-      assertThat(actualCount).isEqualTo(expectedCount);
-    }
+  void testCount(@ResourceFromClassPathArgument String input, boolean validateValues, long expectedCount) {
+    long actualCount = Day4.countValidPassports(input, validateValues);
+    assertThat(actualCount).isEqualTo(expectedCount);
   }
 
   @ParameterizedTest

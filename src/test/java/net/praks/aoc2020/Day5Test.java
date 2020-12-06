@@ -1,16 +1,12 @@
 package net.praks.aoc2020;
 
-import com.google.common.io.CharStreams;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.util.List;
 import java.util.OptionalInt;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class Day5Test {
 
@@ -43,22 +39,18 @@ class Day5Test {
       "example, 820",
       "real, 935",
   })
-  void testMaxId(String caseName, int expectedId) throws IOException {
-    try (Reader reader = new InputStreamReader(ResourceUtil.getResource(getClass(), caseName))) {
-      OptionalInt actualId = Day5.findMaxBoardingPassId(CharStreams.readLines(reader));
-      assertThat(actualId).hasValue(expectedId);
-    }
+  void testMaxId(@ResourceFromClassPathArgument List<String> input, int expectedId) {
+    OptionalInt actualId = Day5.findMaxBoardingPassId(input);
+    assertThat(actualId).hasValue(expectedId);
   }
 
   @ParameterizedTest
   @CsvSource({
       "real, 743",
   })
-  void testMissingId(String caseName, int expectedId) throws IOException {
-    try (Reader reader = new InputStreamReader(ResourceUtil.getResource(getClass(), caseName))) {
-      OptionalInt actualId = Day5.findMissingBoardingPassId(CharStreams.readLines(reader));
-      assertThat(actualId).hasValue(expectedId);
-    }
+  void testMissingId(@ResourceFromClassPathArgument List<String> input, int expectedId) {
+    OptionalInt actualId = Day5.findMissingBoardingPassId(input);
+    assertThat(actualId).hasValue(expectedId);
   }
 
 }

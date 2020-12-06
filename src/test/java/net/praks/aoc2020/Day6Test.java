@@ -1,13 +1,9 @@
 package net.praks.aoc2020;
 
-import com.google.common.io.CharStreams;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.TreeSet;
@@ -22,17 +18,15 @@ class Day6Test {
       "example, 11, 6",
       "real, 6457, 3260",
   })
-  void testAnswersSum(String caseName, long expectedUniqueSum, long expectedCommonSum) throws IOException {
-    try (Reader reader = new InputStreamReader(ResourceUtil.getResource(getClass(), caseName))) {
-      Day6.PlaneAnswers planeAnswers = Day6.PlaneAnswers.parse(CharStreams.toString(reader));
-      long actualUniqueSum = planeAnswers.sumOfUniqueAnswersInEachGroup();
-      long actualCommonSum = planeAnswers.sumOfCommonAnswersInEachGroup();
+  void testAnswersSum(@ResourceFromClassPathArgument String input, long expectedUniqueSum, long expectedCommonSum) {
+    Day6.PlaneAnswers planeAnswers = Day6.PlaneAnswers.parse(input);
+    long actualUniqueSum = planeAnswers.sumOfUniqueAnswersInEachGroup();
+    long actualCommonSum = planeAnswers.sumOfCommonAnswersInEachGroup();
 
-      assertAll(
-          () -> assertThat(actualUniqueSum).isEqualTo(expectedUniqueSum),
-          () -> assertThat(actualCommonSum).isEqualTo(expectedCommonSum)
-      );
-    }
+    assertAll(
+        () -> assertThat(actualUniqueSum).isEqualTo(expectedUniqueSum),
+        () -> assertThat(actualCommonSum).isEqualTo(expectedCommonSum)
+    );
   }
 
   @Test
