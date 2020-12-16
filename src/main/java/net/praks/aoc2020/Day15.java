@@ -2,10 +2,7 @@ package net.praks.aoc2020;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.Value;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +18,7 @@ public class Day15 {
 
     private static final MemoryNumberStatistics DEFAULT_VALUE = new MemoryNumberStatistics();
     // key: spoken number, value: statistics about those spoken numbers
-    private final Map<Integer, MemoryNumberStatistics> countMap = new HashMap<>();
+    private final Map<Integer, MemoryNumberStatistics> countMap = new HashMap<>(1000000);
     private int mostRecentNumber;
     private int turnCounter;
 
@@ -29,7 +26,7 @@ public class Day15 {
       initialNumbers.forEach(this::newTurn);
     }
 
-    private Integer newTurn(int value) {
+    private int newTurn(int value) {
       countMap.computeIfAbsent(value, k -> new MemoryNumberStatistics()).newTurn(++turnCounter);
       mostRecentNumber = value;
       return value;
@@ -46,32 +43,30 @@ public class Day15 {
     }
 
     OptionalInt nextNumberUntilTurn(int turnNumberToEndAt) {
-      OptionalInt lastNumber = OptionalInt.empty();
+      int lastNumber = -1;
       while (turnCounter < turnNumberToEndAt) {
-        lastNumber = OptionalInt.of(nextTurn());
+        lastNumber = nextTurn();
       }
-      return lastNumber;
+      return lastNumber > -1 ? OptionalInt.of(lastNumber) : OptionalInt.empty();
     }
 
   }
 
-  @Value
   static class MemoryNumberStatistics {
-    Deque<Integer> spokenTurns = new ArrayDeque<>(2);
+    int firstTurn = -1;
+    int lastTurn = -1;
 
     void newTurn(int spokenTurn) {
-      if (spokenTurns.size() > 1) {
-        spokenTurns.removeFirst();
-      }
-      spokenTurns.addLast(spokenTurn);
+      firstTurn = lastTurn;
+      lastTurn = spokenTurn;
     }
 
     boolean isFirstTimeSpoken() {
-      return spokenTurns.size() == 1;
+      return firstTurn == -1 && lastTurn != -1;
     }
 
     int howManyTurnsApart() {
-      return spokenTurns.getLast() - spokenTurns.getFirst();
+      return lastTurn - firstTurn;
     }
 
   }
