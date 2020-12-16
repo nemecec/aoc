@@ -4,12 +4,12 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Value;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.LinkedList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.OptionalInt;
-import java.util.TreeMap;
 
 /**
  * <a href="https://adventofcode.com/2020/day/15">Day 15: Rambunctious Recitation</a>
@@ -21,7 +21,7 @@ public class Day15 {
 
     private static final MemoryNumberStatistics DEFAULT_VALUE = new MemoryNumberStatistics();
     // key: spoken number, value: statistics about those spoken numbers
-    private final Map<Integer, MemoryNumberStatistics> countMap = new TreeMap<>();
+    private final Map<Integer, MemoryNumberStatistics> countMap = new HashMap<>();
     private int mostRecentNumber;
     private int turnCounter;
 
@@ -57,13 +57,13 @@ public class Day15 {
 
   @Value
   static class MemoryNumberStatistics {
-    Deque<Integer> spokenTurns = new LinkedList<>();
+    Deque<Integer> spokenTurns = new ArrayDeque<>(2);
 
     void newTurn(int spokenTurn) {
-      spokenTurns.addLast(spokenTurn);
-      if (spokenTurns.size() > 2) {
+      if (spokenTurns.size() > 1) {
         spokenTurns.removeFirst();
       }
+      spokenTurns.addLast(spokenTurn);
     }
 
     boolean isFirstTimeSpoken() {
