@@ -108,6 +108,7 @@ public class Day11 {
     }
   }
 
+  @SuppressWarnings("unused") // used via reflection
   enum SeatMapper {
     ADJACENT((seatMap, seat) -> {
       SeatState newState;
